@@ -3,7 +3,7 @@ package com.monkeygang.weatherstatistics;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class HelloController {
+public class WeatherController {
     @FXML
     private Label welcomeText;
 
