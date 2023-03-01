@@ -1,4 +1,4 @@
-package com.monkeygang.weatherstatistics;
+package com.monkeygang.weatherstatistics.ControlObjects;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -22,44 +22,31 @@ public class WeatherStation {
         this.setupDate = setupDate;
     }
 
+    //didn't make any set methods as we don't want to change the data
+
     public String getStationName() {
         return stationName;
     }
 
-    public void setStationName(String stationName) {
-        this.stationName = stationName;
-    }
 
     public int getStationID() {
         return stationID;
-    }
-
-    public void setStationID(int stationID) {
-        this.stationID = stationID;
     }
 
     public String getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(String coordinates) {
-        this.coordinates = coordinates;
-    }
-
     public double getHeight() {
         return height;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
     }
 
     public Date getSetupDate() {
         return setupDate;
     }
 
-    public void setSetupDate(Date setupDate) {
-        this.setupDate = setupDate;
+    public String getSetupDateString() {
+        return setupDate.toString();
     }
 
     public void addWeatherData(WeatherData weatherData) {

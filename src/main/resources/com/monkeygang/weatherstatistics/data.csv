@@ -1,5 +1,4 @@
-﻿csv-11;;;;;;;;;;;;;;;
-DateTime;Stationsnavn;StationsID;Lgd/brd;Højde;Opsat;Nedbør;Nedbørsminutter;Middeltemperatur;Maksimumtemperatur;Minimumtemperatur;Solskin;Middelvindhastighed;Højeste vindstød;Skyhøjde;Skydække
+﻿DateTime;Stationsnavn;StationsID;Lgd/brd;Højde;Opsat;Nedbør;Nedbørsminutter;Middeltemperatur;Maksimumtemperatur;Minimumtemperatur;Solskin;Middelvindhastighed;Højeste vindstød;Skyhøjde;Skydække
 2023-01-10 10:00:00;Store Jyndevad;06116;’54.8978/9.1282;15,3;5 sep 1984;0,09;0,09;;;;;0;;;
 2023-01-10 11:00:00;Store Jyndevad;06116;’54.8978/9.1282;15,3;5 sep 1984;0;;;;;;0;;;
 2023-01-10 12:00:00;Store Jyndevad;06116;’54.8978/9.1282;15,3;5 sep 1984;0;;;;;;0;;;

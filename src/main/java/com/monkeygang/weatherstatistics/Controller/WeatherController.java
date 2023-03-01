@@ -1,4 +1,4 @@
-package com.monkeygang.weatherstatistics;
+package com.monkeygang.weatherstatistics.Controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

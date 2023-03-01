@@ -1,18 +1,24 @@
-package com.monkeygang.weatherstatistics;
+package com.monkeygang.weatherstatistics.BuisnessLogic;
+
+import com.monkeygang.weatherstatistics.ControlObjects.WeatherData;
+import com.monkeygang.weatherstatistics.ControlObjects.WeatherStation;
+import com.monkeygang.weatherstatistics.WeatherApplication;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
-import java.util.Date;
+import java.sql.SQLException;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class CSVParser {
 
-    public static void displayWeather() throws FileNotFoundException, URISyntaxException {
-        Scanner scanner = new Scanner(new File(Objects.requireNonNull(WeatherApplication.class.getResource("data.csv")).toURI()));
-        scanner.useDelimiter(";|\\n");
+    public static void displayWeather() throws FileNotFoundException, URISyntaxException, SQLException {
+        Scanner scanner = new Scanner(new File(Objects.requireNonNull(WeatherApplication.class.getResource("data.csv")).toURI())); //reads the csv file
+        scanner.useDelimiter("[;\\n]"); //changed the regex to avoid single character alteration, should still work tho
         // scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?"); //ignores a bunch of bozo characters
         System.out.println("csv version: " + scanner.next());
 
@@ -53,38 +59,39 @@ public class CSVParser {
 
         LinkedList<WeatherStation> weatherStations = new LinkedList<>();
 
-        String date;
+        Timestamp date; // Timestamp is a date and time
         String stationName;
         int stationID;
         String coordinates;
         double height;
-        Date setupDate = new Date();
+        Date setupDate;
 
-        boolean isDuplicate = false;
+        boolean isDuplicate;
 
 
-        double rain = 0;
-        double rainMinutes = 0;
-        double avgTemp = 0;
-        double maxTemp = 0;
-        double minTemp = 0;
-        int sun = 0;
-        double avgWind = 0;
-        double maxWindGust = 0;
-        double skyHeight = 0;
-        double cloudCover = 0;
+        double rain;
+        double rainMinutes;
+        double avgTemp;
+        double maxTemp;
+        double minTemp;
+        int sun;
+        double avgWind;
+        double maxWindGust;
+        double skyHeight;
+        double cloudCover;
 
 
 
 
         for (int i = 0; i < 3; i++) { //creates 3 weather data objects with a station object
 
-            date = scanner.next();
+
+            date = Timestamp.valueOf(scanner.next());
             stationName = scanner.next();
             stationID = Integer.parseInt(scanner.next());
             coordinates = scanner.next();
             height = Double.parseDouble(scanner.next().replace(",", "."));
-            setupDate = new Date(scanner.next()); //this doesn't work at all, it shouldn't even run lol
+            setupDate = DateFormatter.formatDate(scanner.next());
 
             isDuplicate = false;
 
@@ -123,12 +130,32 @@ public class CSVParser {
 
         }
 
+        //sends objects to database
+
+        WeatherStationDaoImpl weatherStationDao = new WeatherStationDaoImpl();
+        WeatherDataDaoImpl weatherDataDao = new WeatherDataDaoImpl();
+
+        for (WeatherStation weatherStation : weatherStations) {
+            weatherStationDao.addWeatherStation(weatherStation);
+
+            for (WeatherData weatherData : weatherStation.getWeatherData()){
+                weatherDataDao.addWeatherData(weatherData);
+            }
+
+        }
+
+
         for (WeatherStation weatherStation : weatherStations) {
             System.out.println();
             System.out.println("Station: ");
-            System.out.println(weatherStation.getStationName() + " " + weatherStation.getStationID() + " " + weatherStation.getCoordinates() + " " + weatherStation.getHeight() + " " + weatherStation.getSetupDate());
+            System.out.println("name: " + weatherStation.getStationName());
+            System.out.println("id: " + weatherStation.getStationID());
+            System.out.println("coordinates: " + weatherStation.getCoordinates());
+            System.out.println("height: " + weatherStation.getHeight());
+            System.out.println("setupDate: " + weatherStation.getSetupDate());
             System.out.println();
             System.out.println("Weather Data: ");
+
 
             int i = 1;
 
