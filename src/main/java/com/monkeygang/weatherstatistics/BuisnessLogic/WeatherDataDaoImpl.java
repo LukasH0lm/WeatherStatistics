@@ -1,6 +1,6 @@
 package com.monkeygang.weatherstatistics.BuisnessLogic;
 
-import com.monkeygang.weatherstatistics.ControlObjects.WeatherData;
+import com.monkeygang.weatherstatistics.ControlObjects.Measurement;
 
 import java.sql.*;
 import java.util.Objects;
@@ -11,11 +11,11 @@ public class WeatherDataDaoImpl {
     public WeatherDataDaoImpl() {
     }
 
-    public void addWeatherData(WeatherData weatherData) throws SQLException {
+    public void addWeatherData(Measurement measurement) throws SQLException {
 
         Connection con = ConnectionSingleton.getInstance().getConnection();
 
-        PreparedStatement ps = con.prepareStatement("SELECT * FROM WeatherData;");
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM measurement;");
         ResultSet rs = ps.executeQuery();
 
         PreparedStatement ps2 = con.prepareStatement("SELECT * FROM WeatherStation;");
@@ -24,15 +24,15 @@ public class WeatherDataDaoImpl {
         boolean isDuplicate = false;
 
         while (rs2.next()) {
-            if (Objects.equals(weatherData.getStation().getStationID(), rs2.getInt("id"))) {
+            if (Objects.equals(measurement.getStation().getStationID(), rs2.getInt("id"))) {
                 while (rs.next()) {
 
-                    System.out.println("object date: " + weatherData.getDate());
-                    System.out.println("database date: " + rs.getTimestamp("date"));
+                    System.out.println("object date: " + measurement.getDate());
+                    System.out.println("database date: " + rs.getTimestamp("date_time"));
 
-                    if (Objects.equals(weatherData.getDate(), rs.getTimestamp("date"))) {
+                    if (Objects.equals(measurement.getDate(), rs.getTimestamp("date_time"))) {
                         isDuplicate = true;
-                        System.out.println(weatherData.getStation().getStationName() + ": " + weatherData.getDate() + " is already in database");
+                        System.out.println(measurement.getStation().getStationName() + ": " + measurement.getDate() + " is already in database");
                         break;
                     }
                 }
@@ -44,168 +44,84 @@ public class WeatherDataDaoImpl {
         if (!isDuplicate) {
 
 
-            int currentID = 100;
+            int measurement_id = 100;
             ResultSet rs4 = ps.executeQuery();
 
             while (rs4.next()) {
-                if (rs4.getInt("id") != currentID) {
+                if (rs4.getInt("id") != measurement_id) {
                     break;
                 }
-                currentID++;
+                measurement_id++;
             }
 
 
-            PreparedStatement ps3 = con.prepareStatement("INSERT INTO WeatherData VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);");
+            PreparedStatement ps_measurement = con.prepareStatement("INSERT INTO measurement VALUES (?,?,?);");
 
-            System.out.println("date before going into database: " + weatherData.getDate());
-            ps3.setInt(1, currentID);
-            ps3.setTimestamp(2, weatherData.getDate());
-            ps3.setDouble(3, weatherData.getRain());
-            ps3.setDouble(4, weatherData.getRainMinutes());
-            ps3.setDouble(5, weatherData.getMinTemp());
-            ps3.setDouble(6, weatherData.getAvgTemp());
-            ps3.setDouble(7, weatherData.getMaxTemp());
-            ps3.setDouble(8, weatherData.getSun());
-            ps3.setDouble(9, weatherData.getAvgWind());
-            ps3.setDouble(10, weatherData.getMaxWindGust());
-            ps3.setDouble(11, weatherData.getSkyHeight());
-            ps3.setDouble(12, weatherData.getCloudCover());
-            ps3.setInt(13, weatherData.getStation().getStationID());
+            System.out.println("date before going into database: " + measurement.getDate());
+            ps_measurement.setInt(1, measurement.getStation().getStationID());
+            ps_measurement.setInt(2, measurement_id);
+            ps_measurement.setTimestamp(3, measurement.getDate());
 
 
-            ps3.executeUpdate();
-            System.out.println(weatherData.getStation().getStationName() + ": " + weatherData.getDate() + " " + " has been added to database");
+            ps_measurement.executeUpdate();
+
+            PreparedStatement ps_rain_data = con.prepareStatement("INSERT INTO rain_data VALUES (?,?,?);");
+
+            ps_rain_data.setInt(1, measurement_id);
+            ps_rain_data.setDouble(2, measurement.getRain());
+            ps_rain_data.setDouble(3, measurement.getRainMinutes());
+
+            ps_rain_data.executeUpdate();
+
+
+            PreparedStatement ps_temp_data = con.prepareStatement("INSERT INTO temp_data VALUES (?,?,?,?);");
+
+            ps_temp_data.setInt(1, measurement_id);
+            ps_temp_data.setDouble(2, measurement.getMinTemp());
+            ps_temp_data.setDouble(3, measurement.getAvgTemp());
+            ps_temp_data.setDouble(4, measurement.getMaxTemp());
+
+            ps_temp_data.executeUpdate();
+
+
+            PreparedStatement ps_sun_data = con.prepareStatement("INSERT INTO sun_data VALUES (?,?);");
+            ps_sun_data.setInt(1, measurement_id);
+            ps_sun_data.setDouble(2, measurement.getSun());
+
+            ps_sun_data.executeUpdate();
+
+
+            PreparedStatement ps_wind_data = con.prepareStatement("INSERT INTO wind_data VALUES (?,?,?);");
+            ps_wind_data.setInt(1, measurement_id);
+            ps_wind_data.setDouble(2, measurement.getAvgWind());
+            ps_wind_data.setDouble(3, measurement.getMaxWindGust());
+
+            ps_wind_data.executeUpdate();
+
+
+            PreparedStatement ps_sky_data = con.prepareStatement("INSERT INTO sky_data VALUES (?,?);");
+            ps_sky_data.setInt(1, measurement_id);
+            ps_sky_data.setDouble(2, measurement.getSkyHeight());
+
+            ps_sky_data.executeUpdate();
+
+
+            PreparedStatement ps_cloud_data = con.prepareStatement("INSERT INTO cloud_data VALUES (?,?);");
+            ps_cloud_data.setInt(1, measurement_id);
+            ps_cloud_data.setDouble(2, measurement.getCloudCover());
+
+            ps_cloud_data.executeUpdate();
+
+
+
+
+
+            System.out.println(measurement.getStation().getStationName() + ": " + measurement.getDate() + " " + " has been added to database");
             System.out.println();
 
 
         }
     }
 
-/*
-    @Override
-    public void deletePlayList(Playlist playlist) throws SQLException {
-
-
-        String SQLSongTitle = "'%s'".formatted(playlist.getName());
-
-        PreparedStatement ps = con.prepareStatement("DELETE FROM SongsInPlaylist WHERE PlaylistID=" + getPlaylistID(playlist) + ";");
-        ps.executeUpdate();
-
-        PreparedStatement ps2 = con.prepareStatement("DELETE FROM Playlists WHERE PlaylistName=" + SQLSongTitle + ";");
-        ps2.executeUpdate();
-
-    }
-
-    @Override
-    public void editPlaylist(Playlist playlist, String newName) throws SQLException {
-
-
-        String SQLSongTitle = "'%s'".formatted(playlist.getName());
-
-        PreparedStatement ps = con.prepareStatement("UPDATE Playlists SET PlaylistName=" + newName + " WHERE PlaylistName=" + SQLSongTitle + ";");
-
-        ps.executeUpdate();
-
-
-    }
-
-
-    @Override
-    public LinkedList<Playlist> getAllPlaylists() {
-        LinkedList<Playlist> playlists = new LinkedList<>();
-        try {
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM Playlists;");
-            ResultSet rs = ps.executeQuery();
-
-            Playlist playlist;
-            while (rs.next()) {
-                String id = rs.getString(1);
-                String name = rs.getString(2);
-
-
-                playlist = new Playlist(Integer.parseInt(id), name);
-
-                for (Song song : getPlaylistSongs(playlist)) {
-                    playlist.addSong(song);
-                }
-
-                playlists.add(playlist);
-
-                System.out.println(playlists);
-
-            }
-
-        } catch (SQLException | UnsupportedTagException | IOException e) {
-            System.err.println("can not access records");
-        } catch (InvalidDataException e) {
-            throw new RuntimeException(e);
-
-
-        }
-        return playlists;
-    }
-
-    @Override
-    public void updatePlaylists() {
-
-    }
-
-    @Override
-    public void deleteSongFromPlaylist(Playlist playlist, Song song) throws SQLException {
-
-
-        // PreparedStatement ps = con.prepareStatement("DELETE FROM SongsInPlaylist WHERE SongID=" + songDao.getIDFromSong(song)  + ";" );
-        PreparedStatement ps = con.prepareStatement("DELETE FROM SongsInPlaylist WHERE SongID=" + songDao.getIDFromSong(song) + " AND PlaylistID=" + getPlaylistID(playlist) + ";");
-
-
-        ps.executeUpdate();
-
-
-    }
-
-    @Override
-    public void addSongToPlaylist(Playlist playlist, Song song) throws SQLException {
-
-
-        playlist.addSong(song);
-
-        int songID = songDao.getIDFromSong(song);
-        int playlistID = PlaylistDaoImpl.getPlaylistID(playlist);
-
-        PreparedStatement ps = con.prepareStatement("INSERT INTO SongsInPlaylist VALUES (?,?);");
-
-        ps.setInt(1, playlistID);
-        ps.setInt(2, songID);
-
-        ps.executeUpdate();
-
-
-    }
-
-    private static int getPlaylistID(Playlist playlist) throws SQLException {
-        PreparedStatement ps = con.prepareStatement("SELECT * FROM Playlists;");
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            if (Objects.equals(playlist.getName(), rs.getString("PlaylistName"))) {
-                return rs.getInt("PlaylistID");
-            }
-        }
-        return -1;
-    }
-
-    public LinkedList<Song> getPlaylistSongs(Playlist playlist) throws SQLException, InvalidDataException, UnsupportedTagException, IOException {
-        PreparedStatement ps = con.prepareStatement("SELECT * FROM SongsInPlaylist WHERE PlaylistID=?;");
-        ps.setInt(1, getPlaylistID(playlist));
-        ResultSet rs = ps.executeQuery();
-
-        LinkedList<Song> resList = new LinkedList<>();
-
-        while (rs.next()) {
-            resList.add(songDao.getSongfromID(rs.getInt("SongID")));
-        }
-
-        return resList;
-
-    }*/
 
 }

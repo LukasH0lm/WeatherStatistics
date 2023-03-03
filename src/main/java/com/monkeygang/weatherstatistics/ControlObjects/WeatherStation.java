@@ -11,7 +11,7 @@ public class WeatherStation {
     double height;
     Date setupDate;
 
-    LinkedList<WeatherData> weatherData = new LinkedList<>();
+    LinkedList<Measurement> weatherData = new LinkedList<>();
     //currently, both station and weatherData has a connection to each other through their constructors.
     // Is this good practice?
     public WeatherStation(String stationName, int stationID, String coordinates, double height, Date setupDate) {
@@ -49,11 +49,11 @@ public class WeatherStation {
         return setupDate.toString();
     }
 
-    public void addWeatherData(WeatherData weatherData) {
-        this.weatherData.add(weatherData);
+    public void addWeatherData(Measurement measurement) {
+        this.weatherData.add(measurement);
     }
 
-    public LinkedList<WeatherData> getWeatherData() {
+    public LinkedList<Measurement> getWeatherData() {
         return this.weatherData;
     }
 

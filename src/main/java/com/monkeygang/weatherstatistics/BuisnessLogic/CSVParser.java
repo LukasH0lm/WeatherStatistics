@@ -1,6 +1,6 @@
 package com.monkeygang.weatherstatistics.BuisnessLogic;
 
-import com.monkeygang.weatherstatistics.ControlObjects.WeatherData;
+import com.monkeygang.weatherstatistics.ControlObjects.Measurement;
 import com.monkeygang.weatherstatistics.ControlObjects.WeatherStation;
 import com.monkeygang.weatherstatistics.WeatherApplication;
 
@@ -125,7 +125,7 @@ public class CSVParser {
 
             for (WeatherStation weatherStation : weatherStations) {
                 if (weatherStation.getStationID() == stationID) {
-                    weatherStation.addWeatherData(new WeatherData(weatherStation, date, rain, rainMinutes, avgTemp, maxTemp, minTemp, sun, avgWind, maxWindGust, skyHeight, cloudCover));
+                    weatherStation.addWeatherData(new Measurement(weatherStation, date, rain, rainMinutes, minTemp, avgTemp, maxTemp, sun, avgWind, maxWindGust, skyHeight, cloudCover));
                     break;
                 }
 
@@ -142,8 +142,8 @@ public class CSVParser {
         for (WeatherStation weatherStation : weatherStations) {
             weatherStationDao.addWeatherStation(weatherStation);
 
-            for (WeatherData weatherData : weatherStation.getWeatherData()){
-                weatherDataDao.addWeatherData(weatherData);
+            for (Measurement measurement : weatherStation.getWeatherData()){
+                weatherDataDao.addWeatherData(measurement);
             }
 
         }
@@ -163,21 +163,21 @@ public class CSVParser {
 
             int i = 1;
 
-            for (WeatherData weatherData : weatherStation.getWeatherData()){
+            for (Measurement measurement : weatherStation.getWeatherData()){
                 System.out.println();
                 System.out.println("Weather Data " + i++ + ": ");
                 System.out.println();
-                System.out.println("date: " + weatherData.getDate());
-                System.out.println("rain: " + weatherData.getRain());
-                System.out.println("rainMinutes: " + weatherData.getRainMinutes());
-                System.out.println("avgTemp: " + weatherData.getAvgTemp());
-                System.out.println("maxTemp: " + weatherData.getMaxTemp());
-                System.out.println("minTemp: " + weatherData.getMinTemp());
-                System.out.println("sun: " + weatherData.getSun());
-                System.out.println("avgWind: " + weatherData.getAvgWind());
-                System.out.println("maxWindGust: " + weatherData.getMaxWindGust());
-                System.out.println("skyHeight: " + weatherData.getSkyHeight());
-                System.out.println("cloudCover: " + weatherData.getCloudCover());
+                System.out.println("date: " + measurement.getDate());
+                System.out.println("rain: " + measurement.getRain());
+                System.out.println("rainMinutes: " + measurement.getRainMinutes());
+                System.out.println("avgTemp: " + measurement.getAvgTemp());
+                System.out.println("maxTemp: " + measurement.getMaxTemp());
+                System.out.println("minTemp: " + measurement.getMinTemp());
+                System.out.println("sun: " + measurement.getSun());
+                System.out.println("avgWind: " + measurement.getAvgWind());
+                System.out.println("maxWindGust: " + measurement.getMaxWindGust());
+                System.out.println("skyHeight: " + measurement.getSkyHeight());
+                System.out.println("cloudCover: " + measurement.getCloudCover());
             }
         }
 

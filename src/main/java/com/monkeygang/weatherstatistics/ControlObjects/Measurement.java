@@ -3,7 +3,7 @@ package com.monkeygang.weatherstatistics.ControlObjects;
 
 import java.sql.Timestamp;
 
-public class WeatherData {
+public class Measurement {
     WeatherStation station;
     Timestamp date;
     double rain; //what measure unit?
@@ -23,7 +23,7 @@ public class WeatherData {
     //some variables have different names in different places
     //such as maxWindSpeed and maxWindGust
     //we should talk about naming conventions
-    public WeatherData(WeatherStation station, Timestamp date, double rain, double rainMinutes, double minTemperature, double avgTemp, double maxTemp, int sunshine, double avgWindSpeed, double maxWindSpeed, double skyHeight, double cloudCover) {
+    public Measurement(WeatherStation station, Timestamp date, double rain, double rainMinutes, double minTemperature, double avgTemp, double maxTemp, int sunshine, double avgWindSpeed, double maxWindSpeed, double skyHeight, double cloudCover) {
         this.station = station;
         this.date = date; //should prop be Date, although we need to discuss how to do it
         this.rain = rain;
