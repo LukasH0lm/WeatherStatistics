@@ -20,16 +20,20 @@ public class CSVParser {
         Scanner scanner = new Scanner(new File(Objects.requireNonNull(WeatherApplication.class.getResource("data.csv")).toURI())); //reads the csv file
         scanner.useDelimiter("[;\\n]"); //changed the regex to avoid single character alteration, should still work tho
         // scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?"); //ignores a bunch of bozo characters
-        System.out.println("csv version: " + scanner.next());
+        //System.out.println("csv version: " + scanner.next()); //removed, coulb be added again csv-11
 
-        //skip the first 15 lines, as they are empty
-        for (int i = 0; i < 15; i++){
+        //skip the first 15 lines, as they are empty // not needed because of the removed header
+        /*for (int i = 0; i < 15; i++){
             scanner.next();
-        }
+        }*/
 
-        for (int i = 0; i < 16; i++){
+
+        //for some reason the program recognizes the first 16 lines as headers now
+
+        /*for (int i = 0; i < 16; i++){
             System.out.println("Header: " + scanner.next()); //prints the headers
-        }
+        }*/
+
 
         for(int i = 0; i < (520 * 16);i++){
             scanner.next(); //skips the first 255 * 16 lines of data, as they don't have all the data
