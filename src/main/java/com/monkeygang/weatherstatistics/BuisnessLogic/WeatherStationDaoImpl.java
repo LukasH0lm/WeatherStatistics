@@ -33,26 +33,20 @@ public class WeatherStationDaoImpl {
         if (!isDuplicate) {
 
 
+            PreparedStatement ps2 = con.prepareStatement("INSERT INTO WeatherStation VALUES (?,?,?,?,?,?);");
 
-                PreparedStatement ps2 = con.prepareStatement("INSERT INTO WeatherStation VALUES (?,?,?,?,?,?,?);");
-
-                ps2.setInt(1, weatherStation.getStationID());
-                ps2.setString(2, weatherStation.getStationName());
-                ps2.setDouble(3,weatherStation.getHeight());
-                ps2.setString(4, (weatherStation.getSetupDateString()));
-                ps2.setInt(5, -1);
-                ps2.setString(6, weatherStation.getCoordinates());
-                ps2.setString(7, weatherStation.getCoordinates());
-
+            ps2.setInt(1, weatherStation.getStationID());
+            ps2.setString(2, weatherStation.getStationName());
+            ps2.setDouble(3, weatherStation.getHeight());
+            ps2.setString(4, (weatherStation.getSetupDateString()));
+            ps2.setString(5, weatherStation.getCoordinates());
+            ps2.setString(6, weatherStation.getCoordinates());
 
 
             ps2.executeUpdate();
-                System.out.println(weatherStation.getStationName() + " has been added to database");
-                System.out.println();
-
-
-
-
+            System.out.println();
+            System.out.println(weatherStation.getStationName() + " has been added to database");
+            System.out.println();
 
 
         }

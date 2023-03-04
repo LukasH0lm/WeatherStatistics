@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 public class CSVParser {
 
-    public static void displayWeather() throws FileNotFoundException, URISyntaxException, SQLException {
+    public static void insertDataIntoDatabase() throws FileNotFoundException, URISyntaxException, SQLException {
         Scanner scanner = new Scanner(new File(Objects.requireNonNull(WeatherApplication.class.getResource("data.csv")).toURI())); //reads the csv file
         scanner.useDelimiter("[;\\n]"); //changed the regex to avoid single character alteration, should still work tho
         // scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?"); //ignores a bunch of bozo characters
@@ -28,38 +28,12 @@ public class CSVParser {
         }*/
 
 
-        //for some reason the program recognizes the first 16 lines as headers now
+        //for some reason the program recognizes the headers sometimes????
 
-        /*for (int i = 0; i < 16; i++){
+        for (int i = 0; i < 16; i++) {
             System.out.println("Header: " + scanner.next()); //prints the headers
-        }*/
-
-
-        for(int i = 0; i < (520 * 16);i++){
-            scanner.next(); //skips the first 255 * 16 lines of data, as they don't have all the data
         }
 
-        for (int i = 0; i < 3; i++) { //prints the first 3 lines of data
-
-            System.out.println("Date: " + scanner.next());
-            System.out.println("StationName: " + scanner.next());
-            System.out.println("StationID: " + scanner.next());
-            System.out.println("Coordinates: " + scanner.next());
-            System.out.println("Height: " + scanner.next());
-            System.out.println("SetupDate: " + scanner.next());
-            System.out.println("Rain: " + scanner.next());
-            System.out.println("RainMinutes: " + scanner.next());
-            System.out.println("avgTemp: " + scanner.next());
-            System.out.println("maxTemp: " + scanner.next());
-            System.out.println("minTemp: " + scanner.next());
-            System.out.println("Sun: " + scanner.next());
-            System.out.println("avgWind: " + scanner.next());
-            System.out.println("maxWindGust: " + scanner.next());
-            System.out.println("skyHeight: " + scanner.next());
-            System.out.println("cloudCover: " + scanner.next());
-
-
-        }
 
         LinkedList<WeatherStation> weatherStations = new LinkedList<>();
 
@@ -85,9 +59,7 @@ public class CSVParser {
         double cloudCover;
 
 
-
-
-        for (int i = 0; i < 3; i++) { //creates 3 weather data objects with a station object
+        while (scanner.hasNext()) { //loads the data into the database
 
 
             date = Timestamp.valueOf(scanner.next());
@@ -107,21 +79,21 @@ public class CSVParser {
 
             }
 
-            if (!isDuplicate){
+            if (!isDuplicate) {
                 weatherStations.add(new WeatherStation(stationName, stationID, coordinates, height, setupDate));
             }
 
 
-            rain = Double.parseDouble(scanner.next());
-            rainMinutes = Double.parseDouble(scanner.next());
-            avgTemp = Double.parseDouble(scanner.next().replace(",", "."));
-            maxTemp = Double.parseDouble(scanner.next().replace(",", "."));
-            minTemp = Double.parseDouble(scanner.next().replace(",", "."));
-            sun = Integer.parseInt(scanner.next());
-            avgWind = Double.parseDouble(scanner.next().replace(",", "."));
-            maxWindGust = Double.parseDouble(scanner.next().replace(",", "."));
-            skyHeight = Double.parseDouble(scanner.next().replace(",", "."));
-            cloudCover = Double.parseDouble(scanner.next().replace(",", "."));
+            rain = ParseDouble(scanner.next().replace(",", "."));
+            rainMinutes = ParseDouble(scanner.next().replace(",", "."));
+            avgTemp = ParseDouble(scanner.next().replace(",", "."));
+            maxTemp = ParseDouble(scanner.next().replace(",", "."));
+            minTemp = ParseDouble(scanner.next().replace(",", "."));
+            sun = ParseInt(scanner.next());
+            avgWind = ParseDouble(scanner.next().replace(",", "."));
+            maxWindGust = ParseDouble(scanner.next().replace(",", "."));
+            skyHeight = ParseDouble(scanner.next().replace(",", "."));
+            cloudCover = ParseDouble(scanner.next().replace(",", "."));
 
             for (WeatherStation weatherStation : weatherStations) {
                 if (weatherStation.getStationID() == stationID) {
@@ -142,7 +114,7 @@ public class CSVParser {
         for (WeatherStation weatherStation : weatherStations) {
             weatherStationDao.addWeatherStation(weatherStation);
 
-            for (Measurement measurement : weatherStation.getWeatherData()){
+            for (Measurement measurement : weatherStation.getWeatherData()) {
                 weatherDataDao.addWeatherData(measurement);
             }
 
@@ -163,7 +135,7 @@ public class CSVParser {
 
             int i = 1;
 
-            for (Measurement measurement : weatherStation.getWeatherData()){
+            for (Measurement measurement : weatherStation.getWeatherData()) {
                 System.out.println();
                 System.out.println("Weather Data " + i++ + ": ");
                 System.out.println();
@@ -182,6 +154,26 @@ public class CSVParser {
         }
 
 
+    }
+
+    static double ParseDouble(String strNumber) {
+        if (strNumber != null && strNumber.length() > 0) {
+            try {
+                return Double.parseDouble(strNumber);
+            } catch (Exception e) {
+                return -1;   // or some value to mark this field is wrong. or make a function validates field first ...
+            }
+        } else return 0;
+    }
+
+    static int ParseInt(String strNumber) {
+        if (strNumber != null && strNumber.length() > 0) {
+            try {
+                return Integer.parseInt(strNumber);
+            } catch (Exception e) {
+                return -1;   // or some value to mark this field is wrong. or make a function validates field first ...
+            }
+        } else return 0;
     }
 
 

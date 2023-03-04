@@ -18,25 +18,16 @@ public class WeatherDataDaoImpl {
         PreparedStatement ps = con.prepareStatement("SELECT * FROM measurement;");
         ResultSet rs = ps.executeQuery();
 
-        PreparedStatement ps2 = con.prepareStatement("SELECT * FROM WeatherStation;");
-        ResultSet rs2 = ps2.executeQuery();
 
         boolean isDuplicate = false;
 
-        while (rs2.next()) {
-            if (Objects.equals(measurement.getStation().getStationID(), rs2.getInt("id"))) {
-                while (rs.next()) {
+        while (rs.next()) {
+            if (Objects.equals(measurement.getStation().getStationID(), rs.getInt("station_id")) && Objects.equals(measurement.getDate(), rs.getTimestamp("date_time"))) {
 
-                    System.out.println("object date: " + measurement.getDate());
-                    System.out.println("database date: " + rs.getTimestamp("date_time"));
+                isDuplicate = true;
 
-                    if (Objects.equals(measurement.getDate(), rs.getTimestamp("date_time"))) {
-                        isDuplicate = true;
-                        System.out.println(measurement.getStation().getStationName() + ": " + measurement.getDate() + " is already in database");
-                        break;
-                    }
-                }
-
+                System.out.println(measurement.getStation().getStationName() + ": " + measurement.getDate() + " is already in database");
+                break;
             }
         }
 
@@ -57,7 +48,6 @@ public class WeatherDataDaoImpl {
 
             PreparedStatement ps_measurement = con.prepareStatement("INSERT INTO measurement VALUES (?,?,?);");
 
-            System.out.println("date before going into database: " + measurement.getDate());
             ps_measurement.setInt(1, measurement.getStation().getStationID());
             ps_measurement.setInt(2, measurement_id);
             ps_measurement.setTimestamp(3, measurement.getDate());
@@ -113,11 +103,7 @@ public class WeatherDataDaoImpl {
             ps_cloud_data.executeUpdate();
 
 
-
-
-
             System.out.println(measurement.getStation().getStationName() + ": " + measurement.getDate() + " " + " has been added to database");
-            System.out.println();
 
 
         }

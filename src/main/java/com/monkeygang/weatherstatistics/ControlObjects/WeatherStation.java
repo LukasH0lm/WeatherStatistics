@@ -12,6 +12,7 @@ public class WeatherStation {
     Date setupDate;
 
     LinkedList<Measurement> weatherData = new LinkedList<>();
+
     //currently, both station and weatherData has a connection to each other through their constructors.
     // Is this good practice?
     public WeatherStation(String stationName, int stationID, String coordinates, double height, Date setupDate) {

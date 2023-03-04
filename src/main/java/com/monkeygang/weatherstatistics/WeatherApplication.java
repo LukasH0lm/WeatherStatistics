@@ -1,23 +1,30 @@
 package com.monkeygang.weatherstatistics;
 
-import com.monkeygang.weatherstatistics.BuisnessLogic.CSVParser;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.sql.SQLException;
+
 
 public class WeatherApplication extends Application {
     @Override
-    public void start(Stage stage) throws IOException, URISyntaxException, SQLException { //remove URISyntaxException
+    public void start(Stage stage) throws IOException {
 
-        CSVParser.displayWeather();
+        System.out.println(
+                """
+            <-. (`-')             <-. (`-')_ <-.(`-')  (`-')  _                      (`-')  _ <-. (`-')_           \s
+               \\(OO )_      .->      \\( OO) ) __( OO)  ( OO).-/     .->       .->    (OO ).-/    \\( OO) )    .->   \s
+            ,--./  ,-.)(`-')----. ,--./ ,--/ '-'. ,--.(,------. ,--.'  ,-. ,---(`-') / ,---.  ,--./ ,--/  ,---(`-')\s
+            |   `.'   |( OO).-.  '|   \\ |  | |  .'   / |  .---'(`-')'.'  /'  .-(OO ) | \\ /`.\\ |   \\ |  | '  .-(OO )\s
+            |  |'.'|  |( _) | |  ||  . '|  |)|      /)(|  '--. (OO \\    / |  | .-, \\ '-'|_.' ||  . '|  |)|  | .-, \\\s
+            |  |   |  | \\|  |)|  ||  |\\    | |  .   '  |  .--'  |  /   /) |  | '.(_/(|  .-.  ||  |\\    | |  | '.(_/\s
+            |  |   |  |  '  '-'  '|  | \\   | |  |\\   \\ |  `---. `-/   /`  |  '-'  |  |  | |  ||  | \\   | |  '-'  | \s
+            `--'   `--'   `-----' `--'  `--' `--' '--' `------'   `--'     `-----'   `--' `--'`--'  `--'  `-----'  \s"""
+        );
 
         FXMLLoader fxmlLoader = new FXMLLoader(WeatherApplication.class.getResource("Weather-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        Scene scene = new Scene(fxmlLoader.load(), 600, 450);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
