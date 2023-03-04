@@ -1,5 +1,6 @@
 package com.monkeygang.weatherstatistics.Controller;
 
+import com.monkeygang.weatherstatistics.BuisnessLogic.ChartBuilder;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -7,6 +8,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.layout.BorderPane;
 
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class WeatherController {
@@ -16,7 +18,7 @@ public class WeatherController {
     }
 
     @FXML
-    public void initialize() {
+    public void initialize() throws SQLException {
         //sets the default value of the choice boxes to "data" and "station"
         //adds listeners to the choice boxes
         dataChoice1.getItems().addAll("Rain", "Temperature", "Sunshine", "Wind", "sky height", "Cloud cover");
@@ -28,7 +30,7 @@ public class WeatherController {
 
         stationChoice1.getItems().addAll("Skagen Fyr", "Isenvad", "Billund Lufthavn", "Store Jyndevad", "Røsnæs fyr", "Hammer Odde Fyr");
         stationChoice2.getItems().addAll("Skagen Fyr", "Isenvad", "Billund Lufthavn", "Store Jyndevad", "Røsnæs fyr", "Hammer Odde Fyr");
-        stationChoice1.setValue("Skagen Fyr");
+        stationChoice1.setValue("Skagen_Fyr"); //testing with underscore, should be "Skagen Fyr"
         stationChoice2.setValue("Isenvad");
         addListener(stationChoice1);
         addListener(stationChoice2);
@@ -38,20 +40,12 @@ public class WeatherController {
         startDatePicker.setValue(LocalDate.of(2023, 1, 2));
         endDatePicker.setValue(LocalDate.of(2023, 1, 8));
 
-        borderpane.getLeft().setStyle("-fx-background-color: #ffffff");
-
         update();
 
     }
 
-    public void update() {
-        System.out.println("update");
-        System.out.println(dataChoice1.getValue());
-        System.out.println(dataChoice2.getValue());
-        System.out.println(stationChoice1.getValue());
-        System.out.println(stationChoice2.getValue());
-        System.out.println(startDatePicker.getValue());
-        System.out.println(endDatePicker.getValue());
+    public void update() throws SQLException {
+        borderpane.setLeft(ChartBuilder.buildBarChart(dataChoice1.getValue(), dataChoice2.getValue(), stationChoice1.getValue(), stationChoice2.getValue(), startDatePicker.getValue(), endDatePicker.getValue()));
     }
 
     public void addListener(ChoiceBox<String> choiceBox) {
