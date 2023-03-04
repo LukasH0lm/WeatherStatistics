@@ -1,11 +1,67 @@
 package com.monkeygang.weatherstatistics.Controller;
 
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.layout.BorderPane;
 
+
+import java.time.LocalDate;
+
 public class WeatherController {
+
+    public WeatherController() {
+
+    }
+
+    @FXML
+    public void initialize() {
+        //sets the default value of the choice boxes to "data" and "station"
+        //adds listeners to the choice boxes
+        dataChoice1.getItems().addAll("Rain", "Temperature", "Sunshine", "Wind", "sky height", "Cloud cover");
+        dataChoice2.getItems().addAll("Rain", "Temperature", "Sunshine", "Wind", "sky height", "Cloud cover");
+        dataChoice1.setValue("Rain");
+        dataChoice2.setValue("Temperature");
+        addListener(dataChoice1);
+        addListener(dataChoice2);
+
+        stationChoice1.getItems().addAll("Skagen Fyr", "Isenvad", "Billund Lufthavn", "Store Jyndevad", "Røsnæs fyr", "Hammer Odde Fyr");
+        stationChoice2.getItems().addAll("Skagen Fyr", "Isenvad", "Billund Lufthavn", "Store Jyndevad", "Røsnæs fyr", "Hammer Odde Fyr");
+        stationChoice1.setValue("Skagen Fyr");
+        stationChoice2.setValue("Isenvad");
+        addListener(stationChoice1);
+        addListener(stationChoice2);
+
+        //sets the default value of the date pickers to the first working week of 2023
+        //date range is inclusive of border values
+        startDatePicker.setValue(LocalDate.of(2023, 1, 2));
+        endDatePicker.setValue(LocalDate.of(2023, 1, 8));
+
+        borderpane.getLeft().setStyle("-fx-background-color: #ffffff");
+
+        update();
+
+    }
+
+    public void update() {
+        System.out.println("update");
+        System.out.println(dataChoice1.getValue());
+        System.out.println(dataChoice2.getValue());
+        System.out.println(stationChoice1.getValue());
+        System.out.println(stationChoice2.getValue());
+        System.out.println(startDatePicker.getValue());
+        System.out.println(endDatePicker.getValue());
+    }
+
+    public void addListener(ChoiceBox<String> choiceBox) {
+        choiceBox.getSelectionModel()
+                .selectedItemProperty()
+                .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> System.out.println(newValue) );
+
+
+    }
+
 
     @FXML
     private BorderPane borderpane;
