@@ -30,7 +30,7 @@ public class WeatherController {
 
         stationChoice1.getItems().addAll("Skagen Fyr", "Isenvad", "Billund Lufthavn", "Store Jyndevad", "Røsnæs fyr", "Hammer Odde Fyr");
         stationChoice2.getItems().addAll("Skagen Fyr", "Isenvad", "Billund Lufthavn", "Store Jyndevad", "Røsnæs fyr", "Hammer Odde Fyr");
-        stationChoice1.setValue("Skagen_Fyr"); //testing with underscore, should be "Skagen Fyr"
+        stationChoice1.setValue("Skagen Fyr"); //testing with underscore, should be "Skagen Fyr"
         stationChoice2.setValue("Isenvad");
         addListener(stationChoice1);
         addListener(stationChoice2);
@@ -39,6 +39,28 @@ public class WeatherController {
         //date range is inclusive of border values
         startDatePicker.setValue(LocalDate.of(2023, 1, 2));
         endDatePicker.setValue(LocalDate.of(2023, 1, 8));
+
+        //you could probably change the input parameter of addListener() to node or some shit and then just call addListener() on all the choice boxes and date pickers
+        //but I'm too lazy to do that
+
+        startDatePicker.setOnAction(event -> {
+            try {
+                update();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        endDatePicker.setOnAction(event -> {
+            try {
+                update();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+
+        //for some reason when you pick the same station for both choice boxes one of their dates gets offset
 
         update();
 
@@ -51,7 +73,13 @@ public class WeatherController {
     public void addListener(ChoiceBox<String> choiceBox) {
         choiceBox.getSelectionModel()
                 .selectedItemProperty()
-                .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> System.out.println(newValue) );
+                .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                    try {
+                        update();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
 
     }

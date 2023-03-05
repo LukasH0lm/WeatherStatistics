@@ -24,16 +24,18 @@ public class ChartBuilder {
         barChart.setTitle("Weather statistics");
 
         XYChart.Series tempSeries = new XYChart.Series();
-        tempSeries.setName(data1);
+        tempSeries.setName(station1);
 
         XYChart.Series tempSeries2 = new XYChart.Series();
-        tempSeries.setName(data1);
+        tempSeries2.setName(station2);
 
+        /*
         XYChart.Series rainSeries = new XYChart.Series();
         tempSeries.setName(data2);
 
         XYChart.Series rainSeries2 = new XYChart.Series();
         tempSeries2.setName(data2);
+        */
 
         Connection con = ConnectionSingleton.getInstance().getConnection();
 
@@ -51,58 +53,97 @@ public class ChartBuilder {
 
 
         // add one day to start and end date to include the first and last day
+        //there could be something wrong with this idk
         startDate = startDate.minusDays(1);
         endDate = endDate.plusDays(1);
 
         Timestamp startTimestamp = Timestamp.valueOf(startDate.atStartOfDay());
         Timestamp endTimestamp = Timestamp.valueOf(endDate.atTime(23, 59, 59));
 
-        //something about this chain of prepared statements is wrong
-        //the final resultset only has one row
 
-        PreparedStatement ps_stationid = con.prepareStatement("SELECT * FROM WeatherStation WHERE name = '" + station1 + "';");
-        ResultSet rs_stationid = ps_stationid.executeQuery();
+        PreparedStatement ps = null;
+        String columnName = "";
+        //could use strategy pattern here
 
-        System.out.println("station name: " + station1);
-        rs_stationid.next();
+        if (data1.equals("Temperature")){
+            ps = con.prepareStatement(
+                    "SELECT WeatherStation.name, measurement.date_time, temperature_data.mid_temp " +
+                            "FROM measurement INNER JOIN WeatherStation ON measurement.station_id = WeatherStation.id " +
+                            "INNER JOIN temperature_data ON measurement.id = temperature_data.measurement_id " +
+                            "WHERE WeatherStation.name = ? AND measurement.date_time BETWEEN ? AND ? ");
 
-        PreparedStatement ps_station1 = con.prepareStatement("SELECT * FROM measurement WHERE station_id = " + rs_stationid.getInt("id") + " AND date_time BETWEEN '" + startTimestamp + "' AND '" + endTimestamp + "' ;");
-        ResultSet rs_measurement1 = ps_station1.executeQuery();
-        rs_measurement1.next();
-
-        PreparedStatement ps_temp1 = con.prepareStatement("SELECT * FROM temperature_data WHERE measurement_id = " + rs_measurement1.getInt("id") + ";");
-        ResultSet rs_temp1 = ps_temp1.executeQuery();
+            columnName = "mid_temp";
 
 
+        }else if (data1.equals("Rain")){
+            ps = con.prepareStatement(
+                    "SELECT WeatherStation.name, measurement.date_time, rain_data.rain " +
+                            "FROM measurement INNER JOIN WeatherStation ON measurement.station_id = WeatherStation.id " +
+                            "INNER JOIN rain_data ON measurement.id = rain_data.measurement_id " +
+                            "WHERE WeatherStation.name = ? AND measurement.date_time BETWEEN ? AND ? ");
 
-        PreparedStatement ps_stationid2 = con.prepareStatement("SELECT * FROM WeatherStation WHERE name = '" + station2 + "';");
-        ResultSet rs_stationid2 = ps_stationid2.executeQuery();
+            columnName = "rain";
 
-        rs_stationid2.next();
+        }
 
 
-        PreparedStatement ps_station2 = con.prepareStatement("SELECT * FROM measurement WHERE station_id = " + rs_stationid2.getInt("id") + " AND date_time BETWEEN '" + startTimestamp + "' AND '" + endTimestamp + "' ;");
-        ResultSet rs_measurement2 = ps_station2.executeQuery();
+        assert ps != null;
+        ps.setString(1, station1);
+        ps.setTimestamp(2, startTimestamp);
+        ps.setTimestamp(3, endTimestamp);
+        ResultSet rs = ps.executeQuery();
 
-        rs_measurement2.next();
 
-        PreparedStatement ps_temp2 = con.prepareStatement("SELECT * FROM temperature_data WHERE measurement_id = " + rs_measurement2.getInt("id") + ";");
-        ResultSet rs_temp2 = ps_temp2.executeQuery();
+        PreparedStatement ps2 = null;
 
-        for (int i = 0; i < 1; i++) { //should be daysBetween
-            rs_temp1.next();
-            rs_temp2.next();
+        String columnName2 = "";
 
-            System.out.println("temp1: " + rs_temp1.getDouble("mid_temp"));
-            System.out.println("temp2: " + rs_temp2.getDouble("mid_temp"));
+        //could use strategy pattern here
 
-            tempSeries.getData().add(new XYChart.Data(startDate.plusDays(i).toString(),rs_temp1.getDouble("mid_temp") ));
-            tempSeries2.getData().add(new XYChart.Data(startDate.plusDays(i).toString(), rs_temp2.getDouble("mid_temp")));
+        if (data2.equals("Temperature")){
+            ps2 = con.prepareStatement(
+                    "SELECT WeatherStation.name, measurement.date_time, temperature_data.mid_temp " +
+                            "FROM measurement INNER JOIN WeatherStation ON measurement.station_id = WeatherStation.id " +
+                            "INNER JOIN temperature_data ON measurement.id = temperature_data.measurement_id " +
+                            "WHERE WeatherStation.name = ? AND measurement.date_time BETWEEN ? AND ? ");
 
-            /*
-            rainSeries.getData().add(new XYChart.Data(startDate.plusDays(i).toString(), rainSeries));
-            rainSeries2.getData().add(new XYChart.Data(startDate.plusDays(i).toString(), 20));
-            */
+            columnName2 = "mid_temp";
+
+        }else if (data2.equals("Rain")){
+            ps2 = con.prepareStatement(
+                    "SELECT WeatherStation.name, measurement.date_time, rain_data.rain " +
+                            "FROM measurement INNER JOIN WeatherStation ON measurement.station_id = WeatherStation.id " +
+                            "INNER JOIN rain_data ON measurement.id = rain_data.measurement_id " +
+                            "WHERE WeatherStation.name = ? AND measurement.date_time BETWEEN ? AND ? ");
+
+            columnName2 = "rain";
+
+        }
+
+
+        assert ps2 != null;
+        ps2.setString(1, station2);
+        ps2.setTimestamp(2, startTimestamp);
+        ps2.setTimestamp(3, endTimestamp);
+        ResultSet rs2 = ps2.executeQuery();
+
+
+
+        while(rs.next()) {
+
+            System.out.println("temp1: " + rs.getDouble(columnName));
+
+            tempSeries.getData().add(new XYChart.Data(rs.getTimestamp("date_time").toString(),rs.getDouble(columnName) ));
+
+
+        }
+
+        while(rs2.next()) {
+
+            System.out.println("temp1: " + rs2.getDouble(columnName2));
+
+            tempSeries2.getData().add(new XYChart.Data(rs2.getTimestamp("date_time").toString(),rs2.getDouble(columnName2) ));
+
 
         }
 
@@ -112,6 +153,7 @@ public class ChartBuilder {
 
 
 
+        barChartWeather.setAnimated(true);
 
         return barChartWeather;
 
