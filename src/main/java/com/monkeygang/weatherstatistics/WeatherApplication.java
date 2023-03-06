@@ -24,8 +24,8 @@ public class WeatherApplication extends Application {
         );
 
         FXMLLoader fxmlLoader = new FXMLLoader(WeatherApplication.class.getResource("Weather-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 600, 450);
-        stage.setTitle("Hello!");
+        Scene scene = new Scene(fxmlLoader.load(), 700, 450);
+        stage.setTitle("Weather Statistics");
         stage.setScene(scene);
         stage.show();
     }

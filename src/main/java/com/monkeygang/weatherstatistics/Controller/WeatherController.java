@@ -3,10 +3,10 @@ package com.monkeygang.weatherstatistics.Controller;
 import com.monkeygang.weatherstatistics.BuisnessLogic.ChartBuilder;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.layout.BorderPane;
-
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -59,6 +59,14 @@ public class WeatherController {
             }
         });
 
+        inDaysCheckBox.setOnAction(event -> {
+            try {
+                update();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
 
         //for some reason when you pick the same station for both choice boxes one of their dates gets offset
 
@@ -67,7 +75,7 @@ public class WeatherController {
     }
 
     public void update() throws SQLException {
-        borderpane.setLeft(ChartBuilder.buildBarChart(dataChoice1.getValue(), dataChoice2.getValue(), stationChoice1.getValue(), stationChoice2.getValue(), startDatePicker.getValue(), endDatePicker.getValue()));
+        borderpane.setCenter(ChartBuilder.buildBarChart(dataChoice1.getValue(), dataChoice2.getValue(), stationChoice1.getValue(), stationChoice2.getValue(), startDatePicker.getValue(), endDatePicker.getValue(), inDaysCheckBox.isSelected()));
     }
 
     public void addListener(ChoiceBox<String> choiceBox) {
@@ -105,5 +113,8 @@ public class WeatherController {
 
     @FXML
     private ChoiceBox<String> stationChoice2;
+
+    @FXML
+    private CheckBox inDaysCheckBox;
 
 }
