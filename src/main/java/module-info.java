@@ -12,4 +12,6 @@ module com.monkeygang.weatherstatistics {
     opens com.monkeygang.weatherstatistics.ControlObjects to javafx.fxml;
     exports com.monkeygang.weatherstatistics.Controller;
     opens com.monkeygang.weatherstatistics.Controller to javafx.fxml;
+    exports com.monkeygang.weatherstatistics.BuisnessLogic.Math;
+    opens com.monkeygang.weatherstatistics.BuisnessLogic.Math to javafx.fxml;
 }

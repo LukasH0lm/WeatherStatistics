@@ -1,21 +1,41 @@
 package com.monkeygang.weatherstatistics.Controller;
 
 import com.monkeygang.weatherstatistics.BuisnessLogic.ChartBuilder;
+
+import com.monkeygang.weatherstatistics.BuisnessLogic.Math.MathPatternStrategy;
+import com.monkeygang.weatherstatistics.BuisnessLogic.Math.MedianPattern;
+import com.monkeygang.weatherstatistics.BuisnessLogic.Math.MiddelvaerdiPattern;
+import com.monkeygang.weatherstatistics.BuisnessLogic.Math.MiddelvaerdiTreMidterstePattern;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
+
+
 
 public class WeatherController {
 
     public WeatherController() {
 
     }
+
+    private MathPatternStrategy strategy;
+
+    private ChartBuilder chartBuilder = new ChartBuilder();
+
+    public void setStrategy(MathPatternStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+
 
     @FXML
     public void initialize() throws SQLException {
@@ -74,8 +94,52 @@ public class WeatherController {
 
     }
 
+
+    public void updateMedian(){
+
+        setStrategy(new MedianPattern());
+
+        medianTempSeriesLabel.setText("Median: " + String.valueOf(df.format(strategy.Calculate(chartBuilder.parseTempSeries(1)))));
+
+        medianTempSeries2Label.setText("Median: " + String.valueOf(df.format(strategy.Calculate(chartBuilder.parseTempSeries(2)))));
+
+
+    }
+
+
+    public void updateMiddelvaerdi(){
+
+        setStrategy(new MiddelvaerdiPattern());
+
+        middelværdiTempSeriesLabel.setText("Middelværdi: " + String.valueOf(df.format(strategy.Calculate(chartBuilder.parseTempSeries(1)))));
+
+
+        middelværdiTempSeries2Label.setText("Middelværdi: " + String.valueOf(df.format(strategy.Calculate(chartBuilder.parseTempSeries(2)))));
+
+
+    }
+
+    public void updateMiddelvaerdi3(){
+
+        setStrategy(new MiddelvaerdiTreMidterstePattern());
+
+        middelværdi3TempSeriesLabel.setText("Middelværdi3: " + String.valueOf(df.format(strategy.Calculate(chartBuilder.parseTempSeries(1)))));
+
+
+        middelværdi3TempSeries2Label.setText("Middelværdi3: " + String.valueOf(df.format(strategy.Calculate(chartBuilder.parseTempSeries(2)))));
+
+
+    }
+
+
+
     public void update() throws SQLException {
-        borderpane.setCenter(ChartBuilder.buildBarChart(dataChoice1.getValue(), dataChoice2.getValue(), stationChoice1.getValue(), stationChoice2.getValue(), startDatePicker.getValue(), endDatePicker.getValue(), inDaysCheckBox.isSelected()));
+
+        borderpane.setCenter(chartBuilder.buildBarChart(dataChoice1.getValue(), dataChoice2.getValue(), stationChoice1.getValue(), stationChoice2.getValue(), startDatePicker.getValue(), endDatePicker.getValue(), inDaysCheckBox.isSelected()));
+        updateMedian();
+        updateMiddelvaerdi();
+        updateMiddelvaerdi3();
+
     }
 
     public void addListener(ChoiceBox<String> choiceBox) {
@@ -91,6 +155,23 @@ public class WeatherController {
 
 
     }
+
+    @FXML
+    private Label middelværdi3TempSeries2Label;
+
+    @FXML
+    private Label middelværdi3TempSeriesLabel;
+
+    @FXML
+    private Label middelværdiTempSeries2Label;
+
+    @FXML
+    private Label middelværdiTempSeriesLabel;
+    @FXML
+    private Label medianTempSeries2Label;
+
+    @FXML
+    private Label medianTempSeriesLabel;
 
 
     @FXML

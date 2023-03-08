@@ -1,5 +1,6 @@
 package com.monkeygang.weatherstatistics.BuisnessLogic;
 
+
 import javafx.scene.chart.*;
 
 import java.sql.*;
@@ -8,8 +9,30 @@ import java.time.LocalDate;
 public class ChartBuilder {
 
 
-    public static LineChart buildBarChart(String data1, String data2, String station1, String station2, LocalDate startDate, LocalDate endDate, boolean isInDays) throws SQLException {
+    XYChart.Series tempSeries;
+    XYChart.Series tempSeries2;
 
+
+    public XYChart.Series parseTempSeries(int seriesNumber){
+
+        XYChart.Series tempSeriesToReturn = null;
+
+       if(seriesNumber == 1){
+         tempSeriesToReturn = tempSeries;
+       } else if (seriesNumber == 2){
+
+           tempSeriesToReturn = tempSeries2;
+       }
+
+
+        return tempSeriesToReturn;
+    }
+
+    public LineChart buildBarChart(String data1, String data2, String station1, String station2, LocalDate startDate, LocalDate endDate, boolean isInDays) throws SQLException {
+
+        tempSeries = new XYChart.Series();
+
+        tempSeries2 = new XYChart.Series();
 
         CategoryAxis xAxis = new CategoryAxis();
         xAxis.setLabel("days");
@@ -21,10 +44,8 @@ public class ChartBuilder {
 
         lineChart.setTitle("Weather statistics");
 
-        XYChart.Series tempSeries = new XYChart.Series();
         tempSeries.setName(station1);
 
-        XYChart.Series tempSeries2 = new XYChart.Series();
         tempSeries2.setName(station2);
 
         /*
@@ -142,6 +163,8 @@ public class ChartBuilder {
             }
 
 
+
+
         }
 
         while (rs2.next()) {
@@ -169,8 +192,6 @@ public class ChartBuilder {
             } else {
                 tempSeries2.getData().add(new XYChart.Data(rs2.getTimestamp("date_time").toString(), rs2.getDouble(columnName2)));
             }
-
-
         }
 
 
@@ -186,6 +207,9 @@ public class ChartBuilder {
         LineChart lineChartWeather = new LineChart(xAxis, yAxis);
         lineChartWeather.getData().add(tempSeries);
         lineChartWeather.getData().add(tempSeries2);
+
+
+
 
 
 
