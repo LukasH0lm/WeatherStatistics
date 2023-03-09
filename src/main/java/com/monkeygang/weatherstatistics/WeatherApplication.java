@@ -26,6 +26,7 @@ public class WeatherApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(WeatherApplication.class.getResource("Weather-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Weather Statistics");
+        stage.getIcons().add(new javafx.scene.image.Image("file:src/main/resources/com/monkeygang/weatherstatistics/WeatherIcon.png"));
         stage.setScene(scene);
         stage.show();
     }

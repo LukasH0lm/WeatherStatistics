@@ -212,12 +212,8 @@ public class ChartBuilder {
 
 
 
-
-
-
         lineChartWeather.setCreateSymbols(false);
         lineChartWeather.setAnimated(true);
-
 
 
         return lineChartWeather;
